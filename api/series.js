@@ -1,11 +1,13 @@
 const express = require('express');
 const sqlite3 = require('sqlite3');
 const bodyParser = require('body-parser');
+const issueRouter = require('./issues');
 
 seriesRouter = express.Router();
 const db = new sqlite3.Database(process.env.TEST_DATABASE || './database.sqlite')
 
 seriesRouter.use(bodyParser.json());
+seriesRouter.use('/:seriesId/issues', issueRouter);
 
 const checkInput = (req, res, next) => {
     const series = req.body.series;
