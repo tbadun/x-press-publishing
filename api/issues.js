@@ -42,7 +42,7 @@ issueRouter.get('/', (req, res, next) => {
 issueRouter.post('/', checkInput, (req, res, next) => {
     const issue = req.body.issue;
     db.run(`INSERT INTO Issue (name, issue_number, publication_date, artist_id, series_id) 
-            VALUES ("${issue.name}", ${issue.issueNumber}, ${issue.publicationDate}, ${issue.artistId}, ${req.params.seriesId})`, function(err) {
+            VALUES ("${issue.name}", ${issue.issueNumber}, "${issue.publicationDate}", ${issue.artistId}, ${req.params.seriesId})`, function(err) {
         if (err) {
             next(err);
         } else {
@@ -58,8 +58,8 @@ issueRouter.post('/', checkInput, (req, res, next) => {
 });
 
 issueRouter.put('/:issueId', checkInput, (req, res, next) => {
-    const issue = req.issue;
-    const sql = 'UPDATE Issue SET name = $name, issue_number = $issueNumber, publication_date = $publicationDate, artist_id = $artistId, series_id = $seriesId WHERE Issue.id = $issueId';
+    const issue = req.body.issue;
+    const sql = 'UPDATE Issue SET name = $name, issue_number = $issueNumber, publication_date = $publicationDate, artist_id = $artistId WHERE Issue.id = $issueId AND Issue.series_id = $seriesId';
     const values = {
         $name: issue.name,
         $issueNumber: issue.issueNumber,
@@ -85,7 +85,7 @@ issueRouter.put('/:issueId', checkInput, (req, res, next) => {
 });
 
 issueRouter.delete('/:issueId', (req, res, next) => {
-    db.run(`DELETE FROM TABLE WHERE id = ${req.params.issueId} AND seriesId = ${req.params.seriesId};`, function(err) {
+    db.run(`DELETE FROM Issue WHERE id = ${req.params.issueId} AND series_id = ${req.params.seriesId};`, function(err) {
         if (err) {
             next(err);
         } else {
